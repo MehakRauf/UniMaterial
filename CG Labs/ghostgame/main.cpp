@@ -1,3 +1,4 @@
+
 #include <GL/glut.h>
 #include <iostream>
 #include <windows.h>
@@ -55,38 +56,48 @@ public:
 
     Ghost()
     {
-        size = 20.0f;
+        size = 100.0f;
         x = rand() % screenWidth;
         y = rand() % screenHeight;
-        speedX = (rand() % 5 + 1) / 2.0f *3.0f;
-        speedY = (rand() % 5 + 1) / 2.0f *3.0f;
+        speedX = (rand() % 5 + 1) / 2.0f * 3.0f;
+        speedY = (rand() % 5 + 1) / 2.0f * 3.0f;
     }
 
     void render()
     {
-        glColor3f(1.0f, 0.0f, 0.0f);
-        glBegin(GL_QUADS);
-        glVertex2f(x - size / 2, y);
-        glVertex2f(x + size / 2, y);
-        glVertex2f(x + size / 2, y - size / 2);
-        glVertex2f(x - size / 2, y - size / 2);
+        glColor3f(1.0, 1.0, 1.0); 
+        glBegin(GL_POLYGON);
+        for (int i = 0; i < 100; i++) {
+            float angle = 2.0f * 3.1416f * i / 100;
+            float dx = size * 0.1f * cos(angle); 
+            float dy = size * 0.1f * sin(angle); 
+            glVertex2f(x + dx, y + dy);
+        }
         glEnd();
 
+        // Draw ghost eyes
+        glColor3f(0.0, 0.0, 0.0); // Black eyes
+        glBegin(GL_QUADS);
+        glVertex2f(x - size * 0.03f, y + size * 0.05f);
+        glVertex2f(x - size * 0.02f, y + size * 0.05f);
+        glVertex2f(x - size * 0.02f, y + size * 0.03f);
+        glVertex2f(x - size * 0.03f, y + size * 0.03f);
+
+        glVertex2f(x + size * 0.02f, y + size * 0.05f);
+        glVertex2f(x + size * 0.03f, y + size * 0.05f);
+        glVertex2f(x + size * 0.03f, y + size * 0.03f);
+        glVertex2f(x + size * 0.02f, y + size * 0.03f);
+        glEnd();
+
+        // Draw bottom part of the ghost with a wavy effect
         glBegin(GL_TRIANGLES);
-        glVertex2f(x - size / 2, y - size / 2);
-        glVertex2f(x - size / 4, y - size);
-        glVertex2f(x - size / 4, y - size / 2);
-
-        glVertex2f(x - size / 4, y - size / 2);
-        glVertex2f(x + size / 4, y - size);
-        glVertex2f(x, y - size / 2);
-
-        glVertex2f(x, y - size / 2);
-        glVertex2f(x + size / 4, y - size);
-        glVertex2f(x + size / 2, y - size / 2);
+        for (float i = -size * 0.1f; i <= size * 0.1f; i += size * 0.05f) {
+            glVertex2f(x + i, y - size * 0.1f);        
+            glVertex2f(x + i + size * 0.025f, y);      
+            glVertex2f(x + i + size * 0.05f, y - size * 0.1f); 
+        }
         glEnd();
     }
-
     void move()
     {
         x += speedX;
@@ -129,7 +140,7 @@ bool checkCollision(Player p, Ghost g)
     float distance = sqrt(distanceX * distanceX + distanceY * distanceY);
 
     float collisionDistance = (p.size / 2) + (g.size / 2);
-    return distance < collisionDistance;
+    return distance <= collisionDistance;
 }
 
 void drawBackground()
@@ -145,15 +156,9 @@ void display()
 
     if (gameOver)
     {
-        glRasterPos2f(screenWidth / 2 - 40, screenHeight / 2);
         PlaySound(TEXT("die.wav"), NULL, SND_FILENAME | SND_SYNC);
-        const char *message = "Game Over!";
-        for (const char *c = message; *c != '\0'; c++)
-        {
-            glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *c);
-        }
-        PlaySound(TEXT("ghost.wav"), NULL, SND_ASYNC | SND_LOOP);
         cout << "Your score: " << score << endl;
+        exit(0);
     }
     else
     {
@@ -179,7 +184,7 @@ void update(int value)
         }
     }
     glutPostRedisplay();
-    glutTimerFunc(1000 / 60, update, 0);
+    glutTimerFunc(16, update, 0);
 }
 
 void init()
@@ -203,8 +208,8 @@ int main(int argc, char **argv)
     init();
 
     glutDisplayFunc(display);
-    glutSpecialFunc(handleSpecialKeypress); 
-    glutTimerFunc(1000 / 60, update, 0);
+    glutSpecialFunc(handleSpecialKeypress);
+    glutTimerFunc(16, update, 0);
     PlaySound(TEXT("ghost.wav"), NULL, SND_ASYNC | SND_LOOP);
 
     glutMainLoop();
