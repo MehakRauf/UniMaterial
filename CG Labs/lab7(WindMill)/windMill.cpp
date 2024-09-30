@@ -8,6 +8,7 @@ You need to complete it using transformation then make it animate*/
 #include <mmsystem.h>
 #include <stdio.h>
 #define PI 3.141592
+#define PI 3.141592
 
 void display(void);      // draw everything
 void drawWind(void);     // draw single blade
@@ -37,29 +38,28 @@ void drawWind() // single Triangle
 {
 
    glBegin(GL_TRIANGLES);
+
    glColor3f(0.8, 0.8, 0.8);
    glVertex2f(125.0, 90.0);
    glVertex2f(140.0, 120.0);
    glVertex2f(160.0, 120.0);
    glEnd();
 }
-float rotationAngle = 45.0f;
 
+float rotatingAngle = 45.0f;
 void drawwindmill() // complete windmill in this body
 {
-   // For rotation
-   glPushMatrix();                          // complete windmill in this body
-   glTranslatef(125.0, 90.0, 0.0);          // Translate to the windmill's position
-   glRotatef(rotationAngle, 0.0, 0.0, 1.0); // Rotate the windmill blades
-   glTranslatef(-125.0, -90.0, 0.0);        // Translate back to the original position
-   // drawWind();
-
+   /* Draw a windmill */
+   glPushMatrix();
+   glTranslatef(125.0, 90.0, 0.0);
+   glRotatef(rotatingAngle, 0.0, 0.0, 1.0);
+   glTranslatef(-125.0, -90.0, 0.0);
    for (int i = 0; i < 4; i++)
    {
-      glTranslatef(125.0, 90.0, 0.0);         // Translate to the windmill's position
-      glRotatef(i * 90.0f, 0.0f, 0.0f, 1.0f); // Rotate each blade by 100 degrees
-      glTranslatef(-125.0, -90.0, 0.0);       // Translate back to the original position
-      drawWind();                             // Draw a single blade
+      glTranslatef(125.0, 90.0, 0.0);
+      glRotatef(i * 90.0, 0.0, 0.0, 1.0);
+      glTranslatef(-125.0, -90.0, 0.0);
+      drawWind();
    }
    glPopMatrix();
 }
@@ -67,7 +67,7 @@ void drawwindmill() // complete windmill in this body
 void Timer(int value) // work in this function after completing windmill to animate it
 {
    // update variables here
-   rotationAngle += 3.0;
+   rotatingAngle += 2.0;
    display();
    glutTimerFunc(30, Timer, 1);
 }
@@ -77,20 +77,17 @@ static GLint x = 0;
 static GLint y = 0;
 static GLint z = 0;
 static GLfloat planeSpeed = 1.0;
-void drawplane()
+void drawplane() // work in this function to animate and crash plane
 {
-   static bool isCrashed = false;   // Track whether the plane has crashed
-   static bool soundPlayed = false; // Track whether the crash sound has been played
-
    glPushMatrix();
-
-   // Apply the plane's position
+   static bool isCrashed = false;
+   static bool soundPlayed = false;
+   /* Draw a plane */
    glTranslatef(x, y, 0.0);
-
    if (!isCrashed)
    {
-      // Draw the intact plane
       glBegin(GL_TRIANGLES);
+
       glColor3f(1.0, 1.0, 1.0);
       glVertex2f(245.0, 230.0);
       glVertex2f(245.0, 240.0);
@@ -100,21 +97,19 @@ void drawplane()
       glVertex2f(244.0, 228.0);
       glVertex2f(244.0, 235.0);
       glVertex2f(228.0, 235.0);
+
       glEnd();
 
-      // Move the plane until it reaches the ground
       if (x > -150)
       {
          x -= planeSpeed;
       }
-
       if (y > -180)
       {
          y -= 2;
       }
       else if (y == -180)
       {
-         // Once it hits the ground, set the crashed state
          y = -180;
          isCrashed = true;
       }
@@ -127,29 +122,25 @@ void drawplane()
          PlaySound(TEXT("C:\\Users\\Excalibur\\testing\\lab7(WindMill)\\crash.wav"), NULL, SND_ASYNC);
          soundPlayed = true;
       }
-
-      // Visualize destruction (debris or exploded parts)
       glBegin(GL_TRIANGLES);
-      // First triangle: pointing in a different direction (downward)
-      glColor3f(1.0, 0.0, 0.0); // Change color to simulate explosion/debris
-      glVertex2f(245.0, 210.0); // Same starting point
-      glVertex2f(215.0, 220.0); // Shifted to the left
-      glVertex2f(230.0, 230.0); // Moved downward
 
-      // Second triangle: pointing in another direction (angled down)
-      glColor3f(0.8, 0.0, 0.0);
-      glVertex2f(244.0, 235.0); // Move slightly upward for variety
-      glVertex2f(228.0, 250.0); // Same horizontal level
-      glVertex2f(235.0, 250.0); // Point downward to the right
+      glColor3f(1.0, 1.0, 1.0);
+      glVertex2f(245.0, 210.0);
+      glVertex2f(215.0, 220.0);
+      glVertex2f(230.0, 230.0);
 
-      glColor3f(0.8, 0.3, 0.0);
-      glVertex2f(210.0, 202.0); // Move slightly upward for variety
-      glVertex2f(228.0, 201.0); // Same horizontal level
-      glVertex2f(235.0, 220.0); // Point downward to the right
+      glColor3f(1.0, 1.0, 1.0);
+      glVertex2f(244.0, 235.0);
+      glVertex2f(228.0, 250.0);
+      glVertex2f(235.0, 250.0);
+
+      glColor3f(0.0, 0.0, 0.0);
+      glVertex2f(210.0, 202.0);
+      glVertex2f(228.0, 201.0);
+      glVertex2f(235.0, 220.0);
 
       glEnd();
    }
-
    glPopMatrix();
 }
 
