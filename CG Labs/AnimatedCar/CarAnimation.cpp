@@ -26,13 +26,10 @@ void drawCircle(float centerX, float centerY, float radius, float red = 0, float
     glEnd();
 }
 
-// Draw four white circles inside the tyre
 void drawTyre(float centerX, float centerY, float radius)
 {
-    // Draw the black tyre
     drawCircle(centerX, centerY, radius, 0, 0, 0);
 
-    // Draw the four white circles inside
     float innerRadius = radius * 0.2;
     float offset = radius * 0.5;
     drawCircle(centerX - offset, centerY, innerRadius, 1, 1, 1);
@@ -47,7 +44,7 @@ void drawArc(float centerX, float centerY, float radius, float startAngle, float
     float angle = startAngle * PI / 180.0; // Convert to radians
     float angleInc = sweep * PI / (180.0 * n);
 
-    glBegin(GL_POLYGON); // Changed to POLYGON to fill the arcs
+    glBegin(GL_POLYGON); 
     for (int i = 0; i <= n; ++i)
     {
         float x = centerX + radius * cos(angle);
@@ -104,7 +101,7 @@ void drawRoof()
     glEnd();
 }
 
-// Draw the car door handles
+// Draw the door handles
 void drawHandles()
 {
     glColor3f(0.5, 0.5, 0.5);
@@ -177,13 +174,13 @@ void drawCar()
     drawHandles();
     glPopMatrix();
 
-    // Draw left tyre with white circles
+    // Draw left tyre
     glTranslatef(-0.5, 0, 0);
     glPushMatrix();
     drawTyre(200.0, 130.0, 30.0);
     glPopMatrix();
 
-    // Draw right tyre with white circles
+    // Draw right tyre
     glTranslatef(5, 0, 0);
     glPushMatrix();
     drawTyre(350.0, 130.0, 30.0);
@@ -198,34 +195,7 @@ void timer(int)
     glutTimerFunc(30, timer, 1);
 }
 
-// Display function
-void display()
-{
-    glClearColor(1, 1, 1, 0);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    drawRoad();
-    drawSky();
-
-    // Move and draw the car
-    glPushMatrix();
-    glTranslatef(-(640 - frameNumber * 6), 15, 0); // Animate the car
-    drawCar();
-    glPopMatrix();
-
-    glFlush();
-}
-
-// Initialization
-void myInit(void)
-{
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    gluOrtho2D(0, width, 0, height);
-    glViewport(0, 0, width, height);
-}
-
-// Menu handling
+// Menu 
 void menu(int options)
 {
     switch (options)
@@ -247,7 +217,29 @@ void menu(int options)
     glutPostRedisplay();
 }
 
-// Main function
+void display()
+{
+    glClearColor(1, 1, 1, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    drawRoad();
+    drawSky();
+
+    glPushMatrix();
+    glTranslatef(-(640 - frameNumber * 6), 15, 0); 
+    drawCar();
+    glPopMatrix();
+
+    glFlush();
+}
+
+void myInit(void)
+{
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    gluOrtho2D(0, width, 0, height);
+}
+
 int main(int argc, char **argv)
 {
     glutInit(&argc, argv);
